@@ -3,7 +3,7 @@ from dnslib import DNSRecord, RR, A
 
 from filter import is_blocked
 from logger import log_block
-from config import UPSTREAM_DNS
+from config import UPSTREAM_DNS, LISTEN_PORT
 
 upstream_dns = UPSTREAM_DNS
 
@@ -28,7 +28,7 @@ class FilterResolver(BaseResolver):
         )
 
     def forward_request(self, request):
-        response = DNSRecord.parse( request.send(upstream_dns, 53))
+        response = DNSRecord.parse( request.send(upstream_dns, LISTEN_PORT)) #53 for actual 8053 for testing
 
         return response
 
@@ -38,7 +38,7 @@ def start_server(blocked_domains):
     server = DNSServer(
         resolver,
         address="0.0.0.0",
-        port = 53 #8053 for testing 53 requires root privellage
+        port = LISTEN_PORT #53 for actual 8053 for testing
     )
 
     print("Server starting")
